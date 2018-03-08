@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.e.k.m.a.elmomovieapp.R;
+import com.e.k.m.a.elmomovieapp.models.MovieModel;
 
 import java.util.List;
 

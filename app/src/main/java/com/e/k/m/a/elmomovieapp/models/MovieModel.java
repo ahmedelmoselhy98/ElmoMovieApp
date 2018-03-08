@@ -1,4 +1,4 @@
-package com.e.k.m.a.elmomovieapp.movie;
+package com.e.k.m.a.elmomovieapp.models;
 
 /**
  * Created by ahmedelmoselhy on 2/18/2018.

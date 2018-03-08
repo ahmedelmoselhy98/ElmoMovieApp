@@ -2,7 +2,7 @@ package com.e.k.m.a.elmomovieapp.json;
 
 import android.util.Log;
 
-import com.e.k.m.a.elmomovieapp.movie.MovieModel;
+import com.e.k.m.a.elmomovieapp.models.MovieModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,9 +14,9 @@ import java.util.ArrayList;
  * Created by ahmedelmoselhy on 2/18/2018.
  */
 
-public class MovieJsonUtils {
+public class JsonUtils {
 
-    private static final String LOG_TAG = MovieJsonUtils.class.getSimpleName();
+    private static final String LOG_TAG = JsonUtils.class.getSimpleName();
     private static final String MOVIE_TITLE = "title";
     private static final String MOVIE_POSTER_PATH = "poster_path";
     private static final String MOVIE_VOTE_AVERAGE = "vote_average";
