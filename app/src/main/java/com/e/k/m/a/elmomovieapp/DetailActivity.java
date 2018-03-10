@@ -1,62 +1,47 @@
 package com.e.k.m.a.elmomovieapp;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.e.k.m.a.elmomovieapp.checkinternet.ConnectivityReceiver;
-import com.e.k.m.a.elmomovieapp.checkinternet.MyApplication;
+import com.e.k.m.a.elmomovieapp.models.MovieModel;
+import com.squareup.picasso.Picasso;
 
-public class DetailActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener{
 
+public class DetailActivity extends AppCompatActivity {
+
+    ImageView moviePosterImageView;
+    TextView movieVoteAverageTextView,movieReleaseDateTextView,movieOverViewTextView;
+    MovieModel movieDetail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        Intent intent = getIntent();
+        movieDetail = (MovieModel) intent.getExtras().getSerializable("movieKey");
+        moviePosterImageView = findViewById(R.id.activity_detail_movie_image);
+        movieVoteAverageTextView = findViewById(R.id.activity_detail_movie_vote_average);
+        movieReleaseDateTextView = findViewById(R.id.activity_detail_movie_release_date);
+        movieOverViewTextView = findViewById(R.id.activity_detail_movie_overview);
+        polishUi();
     }
 
 
-
-    // Method to manually check connection status
-    private void checkConnection() {
-        boolean isConnected = ConnectivityReceiver.isConnected();
-        showSnack(isConnected);
-    }
-    // Showing the status in Snackbar
-    private void showSnack(boolean isConnected) {
-        String message;
-        int color;
-        if (isConnected) {
-            message = "Good! Connected to Internet";
-            color = Color.WHITE;
-        } else {
-            message = "Sorry! Not connected to internet";
-            color = Color.RED;
-        }
-        Snackbar snackbar = Snackbar
-                .make(findViewById(R.id.activity_detail_container), message, Snackbar.LENGTH_LONG);
-
-        View sbView = snackbar.getView();
-        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setTextColor(color);
-        snackbar.show();
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // register connection status listener
-        MyApplication.getInstance().setConnectivityListener(this);
-    }
-    /**
-     * Callback will be triggered when there is change in
-     * network connection
-     */
-    @Override
-    public void onNetworkConnectionChanged(boolean isConnected) {
-        showSnack(isConnected);
+    private void polishUi(){
+        if (movieDetail.getMoviePostarPath()!=null)
+            Picasso.with(this).load(BuildUrl.IMAGE_BASE_URL+movieDetail.getMoviePostarPath()).into(moviePosterImageView);
+        if (movieDetail.getMovieTitle()!=null)
+            setTitle(movieDetail.getMovieTitle());
+        if (movieDetail.getMovieVoteAverage()!=null)
+            movieVoteAverageTextView.setText(movieDetail.getMovieVoteAverage());
+        if (movieDetail.getMovieReleaseDate()!=null)
+            movieReleaseDateTextView.setText(movieDetail.getMovieReleaseDate());
+        if (movieDetail.getMovieOverview()!=null)
+            movieOverViewTextView.setText(movieDetail.getMovieOverview());
     }
 }

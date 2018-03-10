@@ -8,4 +8,58 @@
     android:orientation="vertical"
     tools:context="com.e.k.m.a.elmomovieapp.DetailActivity">
 
+    <ImageView
+        android:id="@+id/activity_detail_movie_image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/movie_image_height"
+        android:clickable="true"
+        android:scaleType="fitXY"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        />
+    <TextView
+        android:id="@+id/activity_detail_movie_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_detail_movie_image"
+        android:paddingLeft="@dimen/movie_title_padding"
+        android:paddingRight="@dimen/movie_title_padding"
+        android:paddingTop="@dimen/movie_title_padding"
+        android:textColor="@color/movie_title"
+        android:textSize="@dimen/movie_title"
+        android:maxLines="1"
+        />
+    <TextView
+        android:id="@+id/activity_detail_movie_vote_average"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_detail_movie_title"
+        android:paddingLeft="@dimen/movie_title_padding"
+        android:paddingRight="@dimen/movie_title_padding"
+        android:paddingBottom="@dimen/movie_rate_padding_bottom"
+        android:textSize="@dimen/movie_vote_average"
+        />
+    <TextView
+        android:id="@+id/activity_detail_movie_release_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_detail_movie_vote_average"
+        android:paddingLeft="@dimen/movie_title_padding"
+        android:paddingRight="@dimen/movie_title_padding"
+        android:paddingTop="@dimen/movie_title_padding"
+        android:textColor="@color/movie_title"
+        android:textSize="@dimen/movie_vote_average"
+        android:maxLines="1"
+        />
+    <TextView
+        android:id="@+id/activity_detail_movie_overview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_detail_movie_release_date"
+        android:paddingLeft="@dimen/movie_title_padding"
+        android:paddingRight="@dimen/movie_title_padding"
+        android:paddingTop="@dimen/movie_title_padding"
+        android:textColor="@color/movie_title"
+        android:textSize="@dimen/movie_vote_average"
+        />
+
 </LinearLayout>

@@ -1,10 +1,12 @@
 package com.e.k.m.a.elmomovieapp.models;
 
+import java.io.Serializable;
+
 /**
  * Created by ahmedelmoselhy on 2/18/2018.
  */
 
-public class MovieModel {
+public class MovieModel  implements Serializable{
     private String movieTitle;
     private String movieOverview;
     private String moviePostarPath;
