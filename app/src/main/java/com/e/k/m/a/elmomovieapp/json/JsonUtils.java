@@ -32,9 +32,9 @@ public class JsonUtils {
     private static final String MOVIE_OVERVIEW = "overview";
     private static final String JSONARRAY_RESULT = "results";
     private static MovieModel movieModel;
-    private  static ArrayList<MovieModel> movieModelArrayList = new ArrayList<MovieModel>();
-public static ArrayList<MovieModel> parseMovieJson(String json){
 
+    public static ArrayList<MovieModel> parseMovieJson(String json){
+        ArrayList<MovieModel> movieModelArrayList = new ArrayList<MovieModel>();
     try {
         JSONObject jsonObject1 = new JSONObject(json);
         JSONArray jsonArray = jsonObject1.getJSONArray(JSONARRAY_RESULT);
@@ -45,7 +45,6 @@ public static ArrayList<MovieModel> parseMovieJson(String json){
             movieModel.setMovieVoteAverage(jsonArray.optJSONObject(i).optString(MOVIE_VOTE_AVERAGE));
             movieModel.setMovieReleaseDate(jsonArray.optJSONObject(i).optString(MOVIE_RELEASE_DATE));
             movieModel.setMovieOverview(jsonArray.optJSONObject(i).optString(MOVIE_OVERVIEW));
-            Log.e(TAG,movieModel.toString());
             movieModelArrayList.add(movieModel);
         }
     } catch (JSONException e) {

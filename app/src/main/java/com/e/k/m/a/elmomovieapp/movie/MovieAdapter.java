@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.e.k.m.a.elmomovieapp.BuildUrl;
@@ -20,6 +21,7 @@ import com.e.k.m.a.elmomovieapp.models.MovieModel;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +32,7 @@ public class MovieAdapter extends ArrayAdapter<MovieModel> {
 
     private static final String TAG = MovieAdapter.class.getSimpleName();
     public MovieAdapter(@NonNull Context context, @NonNull List<MovieModel> objects) {
-        super(context, 0, objects);
+        super(context, 0,objects);
     }
 
     @NonNull
