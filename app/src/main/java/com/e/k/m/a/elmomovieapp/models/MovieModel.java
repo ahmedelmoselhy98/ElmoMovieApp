@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 
 public class MovieModel  implements Serializable{
+    private int movieId;
     private String movieTitle;
     private String movieOverview;
     private String moviePostarPath;
@@ -14,6 +15,13 @@ public class MovieModel  implements Serializable{
     private String movieVoteAverage;
 
     public MovieModel() {
+    }
+    public int getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
     }
 
     public String getMovieTitle() {
