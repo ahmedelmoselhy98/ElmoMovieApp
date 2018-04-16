@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.e.k.m.a.elmomovieapp.contentprovider.MovieProvider;
 import com.e.k.m.a.elmomovieapp.database.MovieDatabaseHelper;
 import com.e.k.m.a.elmomovieapp.json.JsonUtils;
 import com.e.k.m.a.elmomovieapp.adapters.MovieAdapter;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         movieGridView.setEmptyView(emptyStateTextView);
         movieAdapter = new MovieAdapter(this.getBaseContext(),new ArrayList<MovieModel>());
         movieGridView.setAdapter(movieAdapter);
+        MovieProvider movieProvider = new MovieProvider();
         databaseHelper = new MovieDatabaseHelper(this);
     }
     @Override
