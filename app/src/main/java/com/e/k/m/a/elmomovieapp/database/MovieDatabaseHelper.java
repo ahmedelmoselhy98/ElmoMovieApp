@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -67,21 +70,15 @@ public class MovieDatabaseHelper extends SQLiteOpenHelper {
         else
             return false;
     }
-    public boolean insertFavorite(ContentValues values) {
+    public long insertFavorite(ContentValues values) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         long insert = sqLiteDatabase.insert(MovieContruct.Favorite.TABLE_NAME, null, values);
-        if (insert > -1)
-            return true;
-        else
-            return false;
+            return insert;
     }
-    public boolean deleteFavorite(int id) {
+    public int  deleteFavorite(String selection,String[] selectionArgs) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-        int delete = sqLiteDatabase.delete(MovieContruct.Favorite.TABLE_NAME, "movie_id = ?", new String[]{id + ""});
-        if (delete > -1)
-            return true;
-        else
-            return false;
+        int delete = sqLiteDatabase.delete(MovieContruct.Favorite.TABLE_NAME, selection, selectionArgs);
+        return delete;
     }
     public ArrayList<MovieModel> getMoiveData(){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
@@ -104,6 +101,11 @@ public class MovieDatabaseHelper extends SQLiteOpenHelper {
     public Cursor queryMoiveData(){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         Cursor c=sqLiteDatabase.query(MovieContruct.Favorite.TABLE_NAME, null, null, null, null, null, null);
+    return c;
+    }
+    public Cursor queryMoiveData(String selection, String[] selectionArgs){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        Cursor c=sqLiteDatabase.query(MovieContruct.Favorite.TABLE_NAME, null, selection, selectionArgs, null, null, null);
     return c;
     }
     public boolean checkFavoritFilm(int id){

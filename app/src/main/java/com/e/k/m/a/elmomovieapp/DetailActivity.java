@@ -1,26 +1,30 @@
 package com.e.k.m.a.elmomovieapp;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import com.e.k.m.a.elmomovieapp.adapters.ReviewAdapter;
 import com.e.k.m.a.elmomovieapp.adapters.TrailerAdapter;
-import com.e.k.m.a.elmomovieapp.database.MovieDatabaseHelper;
+import com.e.k.m.a.elmomovieapp.contentprovider.MovieProvider;
+import com.e.k.m.a.elmomovieapp.database.MovieContruct;
 import com.e.k.m.a.elmomovieapp.json.JsonUtils;
 import com.e.k.m.a.elmomovieapp.models.MovieModel;
 import com.e.k.m.a.elmomovieapp.models.ReviewModel;
 import com.e.k.m.a.elmomovieapp.models.TrailerModel;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 public class DetailActivity extends AppCompatActivity {
     ImageView moviePosterImageView;
@@ -29,15 +33,18 @@ public class DetailActivity extends AppCompatActivity {
     RecyclerView trailersRecyclerView,reviewsRecyclerView;
     TrailerAdapter trailerAdapter;
     ReviewAdapter reviewAdapter;
-    MovieDatabaseHelper databaseHelper;
     ToggleButton favoriteToggleButton;
+    ScrollView scrollView;
+    public static int scrollX = 0;
+    public static int scrollY = -1;
+    public static int lastFirstVisiblePosition = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         Intent intent = getIntent();
         movieDetail = (MovieModel) intent.getExtras().getSerializable("movieKey");
-        databaseHelper = new MovieDatabaseHelper(this);
         initUI();
         polishUi();
         addMovieToFavorites();
@@ -50,6 +57,7 @@ public class DetailActivity extends AppCompatActivity {
     movieOverViewTextView = findViewById(R.id.activity_detail_movie_overview);
     favoriteToggleButton = findViewById(R.id.favorite_toggle_button);
     trailersRecyclerView = findViewById(R.id.trailer_recycler_view);
+    scrollView = findViewById(R.id.activity_detail_container);
     LinearLayoutManager trailersLinearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
     trailersRecyclerView.setLayoutManager(trailersLinearLayoutManager);
     reviewsRecyclerView = findViewById(R.id.reviews_recycler_view);
@@ -72,24 +80,43 @@ public class DetailActivity extends AppCompatActivity {
         favoriteToggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!favoriteToggleButton.isChecked()){
+                if (favoriteToggleButton.isChecked()){
                     // here add movie to database
-                    if (databaseHelper.insertFavorite(movieDetail)){
-                        Toast.makeText(DetailActivity.this, "Movie Added Successfully", Toast.LENGTH_SHORT).show();
-                    }else
-                        Toast.makeText(DetailActivity.this, "Movie Added Failed", Toast.LENGTH_SHORT).show();
+                    ContentValues values =  new ContentValues();
+                    values.put(MovieContruct.Favorite.MOVIE_ID, movieDetail.getMovieId());
+                    values.put(MovieContruct.Favorite.POSTER_PATH, movieDetail.getMoviePostarPath());
+                    values.put(MovieContruct.Favorite.OVERVIEW, movieDetail.getMovieOverview());
+                    values.put(MovieContruct.Favorite.RELEASE_DATE, movieDetail.getMovieReleaseDate());
+                    values.put(MovieContruct.Favorite.TITLE, movieDetail.getMovieTitle());
+                    values.put(MovieContruct.Favorite.VOTE_AVERAGE, movieDetail.getMovieVoteAverage());
+                    Uri uri = getContentResolver().insert(MovieProvider.CONTENT_URI,values);
+                    Log.e(DetailActivity.class.getSimpleName(),uri+"");
+                    Toast.makeText(DetailActivity.this, "Movie Added Successfully", Toast.LENGTH_SHORT).show();
                 }else {
                     // here delete movie from database
-                    if (databaseHelper.deleteFavorite(movieDetail.getMovieId())){
+                    String selection = "movie_id = ?";
+                    String selectionArgs [] = new String[]{movieDetail.getMovieId() + ""};
+                    int delete = getContentResolver().delete(MovieProvider.CONTENT_URI,selection,selectionArgs);
+                    if (delete > -1)
                         Toast.makeText(DetailActivity.this, "Movie Deleted Successfully", Toast.LENGTH_SHORT).show();
-                    }else{
+                    else
                         Toast.makeText(DetailActivity.this, "Movie Deleted Failed", Toast.LENGTH_SHORT).show();
-                    }}}
+                }
+            }
         });
     }
+
     public void checkIfMovieFavorite(){
-        if (databaseHelper.checkFavoritFilm(movieDetail.getMovieId()))
+    //this method to check if the movie in favorite list
+        String URL = "content://movieprovider/movies/"+movieDetail.getMovieId();
+        Uri uri = Uri.parse(URL);
+        String selection = "movie_id = ?";
+        String selectionArgs [] = new String[]{movieDetail.getMovieId() + ""};
+        Cursor c = getContentResolver().query(uri,null,selection,selectionArgs,null,null);
+        if (c.moveToFirst())
             favoriteToggleButton.setChecked(true);
+        else
+            favoriteToggleButton.setChecked(false);
     }
     @Override
     protected void onStart() {
@@ -156,6 +183,25 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        scrollX = scrollView.getScrollX();
+        scrollY = scrollView.getScrollY();
+        lastFirstVisiblePosition = ((LinearLayoutManager)reviewsRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+    }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        scrollView.post(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                scrollView.scrollTo(scrollX, scrollY);
+            }
+        });
+        ((LinearLayoutManager) reviewsRecyclerView.getLayoutManager()).scrollToPosition(lastFirstVisiblePosition);
+    }
 }

@@ -1,5 +1,7 @@
 package com.e.k.m.a.elmomovieapp;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.e.k.m.a.elmomovieapp.contentprovider.MovieProvider;
-import com.e.k.m.a.elmomovieapp.database.MovieDatabaseHelper;
 import com.e.k.m.a.elmomovieapp.json.JsonUtils;
 import com.e.k.m.a.elmomovieapp.adapters.MovieAdapter;
 import com.e.k.m.a.elmomovieapp.models.MovieModel;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     MovieAdapter movieAdapter;
     TextView emptyStateTextView;
     ProgressBar movieProgressBar;
-    MovieDatabaseHelper databaseHelper;
+    MovieProvider movieProvider;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,8 +38,7 @@ public class MainActivity extends AppCompatActivity {
         movieGridView.setEmptyView(emptyStateTextView);
         movieAdapter = new MovieAdapter(this.getBaseContext(),new ArrayList<MovieModel>());
         movieGridView.setAdapter(movieAdapter);
-        MovieProvider movieProvider = new MovieProvider();
-        databaseHelper = new MovieDatabaseHelper(this);
+        movieProvider = new MovieProvider();
     }
     @Override
     protected void onStart() {
@@ -64,15 +64,31 @@ public class MainActivity extends AppCompatActivity {
         }else
             emptyStateTextView.setText(R.string.no_internet);
         if (item.getItemId() == R.id.favorite){
-            ArrayList<MovieModel> movies = databaseHelper.getMoiveData();
-            movieProgressBar.setVisibility(View.GONE);
-            if (movies != null && !movies.isEmpty()) {
-                movieAdapter.clear();
-                movieAdapter.addAll(movies);
-                movieAdapter.notifyDataSetChanged();
-                movieGridView.setAdapter(movieAdapter);
-            }else
+            Uri uri = Uri.parse("content://movieprovider/movies");;
+            Cursor c = getContentResolver().query(uri,null,null,null,null);
+            ArrayList<MovieModel> movies = new ArrayList<MovieModel>();
+            MovieModel model;
+            while (c.moveToNext()){
+                model = new MovieModel();
+                model.setMovieId(c.getInt(0));
+                model.setMoviePostarPath(c.getString(1));
+                model.setMovieOverview(c.getString(2));
+                model.setMovieReleaseDate(c.getString(3));
+                model.setMovieTitle(c.getString(4));
+                Log.e("favorite list Title",c.getString(4));
+                model.setMovieVoteAverage(c.getString(5));
+                movies.add(model);
+            }
+            if (c.moveToFirst()){
+                movieProgressBar.setVisibility(View.GONE);
+                    movieAdapter.clear();
+                    movieAdapter.addAll(movies);
+                    movieAdapter.notifyDataSetChanged();
+                    movieGridView.setAdapter(movieAdapter);
+            }else{
+                movieProgressBar.setVisibility(View.GONE);
                 Toast.makeText(this, "There is no movies in favorite list", Toast.LENGTH_SHORT).show();
+            }
         }
         return true;
     }

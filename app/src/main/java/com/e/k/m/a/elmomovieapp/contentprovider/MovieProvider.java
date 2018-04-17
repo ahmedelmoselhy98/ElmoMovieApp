@@ -1,10 +1,12 @@
 package com.e.k.m.a.elmomovieapp.contentprovider;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,9 +19,9 @@ import com.e.k.m.a.elmomovieapp.models.MovieModel;
  */
 
 public class MovieProvider extends ContentProvider{
-    static final String PROVIDER_NAME = "com.e.k.m.a.elmomovieapp";
+    static final String PROVIDER_NAME = "movieprovider";
     static final String URL = "content://"+PROVIDER_NAME+"/movies";
-    static final Uri CONTENT_URI = Uri.parse(URL);
+    public static final Uri CONTENT_URI = Uri.parse(URL);
     static final String ID = "id";
     static final String TITLE = "title";
     static final int MOVIES = 1;
@@ -28,8 +30,8 @@ public class MovieProvider extends ContentProvider{
     MovieDatabaseHelper databaseHelper;
     static{
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(PROVIDER_NAME, "students", MOVIES);
-        uriMatcher.addURI(PROVIDER_NAME, "students/#", MOVIE_ID);
+        uriMatcher.addURI(PROVIDER_NAME, "movies", MOVIES);
+        uriMatcher.addURI(PROVIDER_NAME, "movies/#", MOVIE_ID);
     }
     @Override
     public boolean onCreate() {
@@ -41,10 +43,19 @@ public class MovieProvider extends ContentProvider{
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-
-        return databaseHelper.queryMoiveData();
+        switch (uriMatcher.match(uri)) {
+            case MOVIES:
+                Cursor c1 = databaseHelper.queryMoiveData();
+                c1.setNotificationUri(getContext().getContentResolver(),uri);
+                return c1;
+            case MOVIE_ID:
+                Cursor c2 = databaseHelper.queryMoiveData(selection, selectionArgs);
+                c2.setNotificationUri(getContext().getContentResolver(),uri);
+                return c2;
+            default:
+                throw new IllegalArgumentException("Unsupported URI: " + uri);
+        }
     }
-
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
@@ -61,13 +72,19 @@ public class MovieProvider extends ContentProvider{
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-
-        return null;
+            long rowId = databaseHelper.insertFavorite(values);
+        if (rowId > -1) {
+            Uri _uri = ContentUris.withAppendedId(uri,rowId);
+            getContext().getContentResolver().notifyChange(_uri,null);
+            return _uri;
+        }
+        throw new SQLException("Faild To add record to " + uri);
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        int delete = databaseHelper.deleteFavorite(selection,selectionArgs);
+        return delete;
     }
 
     @Override

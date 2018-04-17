@@ -42,9 +42,9 @@ public class JsonUtils {
         for (int i = 0;i < jsonArray.length();i++){
             movieModel = new MovieModel();
             movieModel.setMovieId(jsonArray.optJSONObject(i).optInt(MOVIE_ID));
-            Log.e(TAG,"Movie id: "+movieModel.getMovieId());
+//            Log.e(TAG,"Movie id: "+movieModel.getMovieId());
             movieModel.setMovieTitle(jsonArray.optJSONObject(i).optString(MOVIE_TITLE));
-            Log.e(TAG,"Movie Title: "+movieModel.getMovieTitle());
+//            Log.e(TAG,"Movie Title: "+movieModel.getMovieTitle());
             movieModel.setMoviePostarPath(jsonArray.optJSONObject(i).optString(MOVIE_POSTER_PATH));
             movieModel.setMovieVoteAverage(jsonArray.optJSONObject(i).optString(MOVIE_VOTE_AVERAGE));
             movieModel.setMovieReleaseDate(jsonArray.optJSONObject(i).optString(MOVIE_RELEASE_DATE));

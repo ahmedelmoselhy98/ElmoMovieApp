@@ -22,7 +22,7 @@
         <provider
             android:exported="true"
             android:name=".contentprovider.MovieProvider"
-            android:authorities="com.example.provider.College">
+            android:authorities="movieprovider">
         </provider>
     </application>
 
