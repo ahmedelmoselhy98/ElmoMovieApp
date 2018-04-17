@@ -65,7 +65,10 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
                     if (CheckInternetConnection.isConnected(mContext)) {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(BuildUrl.VIDEO_BASE_URL +
                                 trailerModelArrayList.get(currentPosition).getKey()));
-                        mContext.startActivity(intent);
+                        if (intent.resolveActivity(mContext.getPackageManager()) != null) {
+                            mContext.startActivity(intent);
+
+                        }
                     }else
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                 }
