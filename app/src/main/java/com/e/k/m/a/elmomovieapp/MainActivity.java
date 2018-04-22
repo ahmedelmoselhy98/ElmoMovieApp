@@ -1,8 +1,10 @@
 package com.e.k.m.a.elmomovieapp;
 
 import android.database.Cursor;
+import android.graphics.Movie;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,9 +30,16 @@ public class MainActivity extends AppCompatActivity {
     TextView emptyStateTextView;
     ProgressBar movieProgressBar;
     MovieProvider movieProvider;
+    ArrayList<MovieModel> movies1;
+    public static int scrollX = 0;
+    public static int scrollY = -1;
+    public static int lastFirstVisiblePosition = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
         movieGridView = findViewById(R.id.Movie_gridview);
         emptyStateTextView = findViewById(R.id.empty_state_textview);
@@ -39,16 +48,95 @@ public class MainActivity extends AppCompatActivity {
         movieAdapter = new MovieAdapter(this.getBaseContext(),new ArrayList<MovieModel>());
         movieGridView.setAdapter(movieAdapter);
         movieProvider = new MovieProvider();
+        if (savedInstanceState==null){
+            if (CheckInternetConnection.isConnected(this))
+                new MovieAsyncTask().execute(BuildUrl.POPULAR_MOVIE_URL);
+            else {
+                emptyStateTextView.setText(R.string.no_internet);
+            }
+        }else {
+            Parcelable[] parcelable = savedInstanceState.
+                    getParcelableArray("movies");
+            if (parcelable != null) {
+                int numMovieObjects = parcelable.length;
+                Toast.makeText(this, ""+numMovieObjects, Toast.LENGTH_SHORT).show();
+
+                ArrayList<MovieModel> movies = new ArrayList<MovieModel>();
+                for (int i = 0; i < numMovieObjects; i++) {
+                    movies.add((MovieModel) parcelable[i]);
+                }
+                // Load movie objects into view
+                movieGridView.setAdapter(new MovieAdapter(this,movies));
+                movieGridView.setScrollX(savedInstanceState.getInt("scrollX"));
+                movieGridView.setScrollY(savedInstanceState.getInt("scrollY"));
+                Toast.makeText(this, "aaaaaaaaaaaaasdasdsad", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        int gridSize = movieGridView.getCount();
+        if (gridSize > 0){
+            MovieModel [] models = new MovieModel[gridSize];
+            for (int i = 0;i < gridSize;i++){
+                models[i] = (MovieModel) movieGridView.getItemAtPosition(i);
+            }
+            savedInstanceState.putParcelableArray("movies", models);
+        }
+        savedInstanceState.putInt("scrollX", movieGridView.getScrollX());
+        savedInstanceState.putInt("scrollY", movieGridView.getScrollY());
+        savedInstanceState.putBoolean("status", true);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    Parcelable state;
+    int index;
+    /*
+    @Override
+    protected void onResume() {
+        movieGridView.setSelection(index);
+        // Restore previous state (including selected item index and scroll position)
+        if(state != null) {
+            Log.e(TAG, "trying to restore listview state..");
+            movieGridView.onRestoreInstanceState(state);
+        }
+
+        movieGridView.post(new Runnable() {
+            @Override
+            public void run() {
+                movieGridView.setScrollX(scrollX);
+                movieGridView.setScrollY(scrollY);
+            }
+        });
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        // Save GridView state @ onPause
+        Log.e(TAG, "saving GridView state @ onPause");
+        index = movieGridView.getFirstVisiblePosition();
+        state = movieGridView.onSaveInstanceState();
+        scrollX = movieGridView.getScrollX();
+        scrollY = movieGridView.getScrollY();
+        super.onPause();
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-        if (CheckInternetConnection.isConnected(this))
-        new MovieAsyncTask().execute(BuildUrl.POPULAR_MOVIE_URL);
-        else {
-            emptyStateTextView.setText(R.string.no_internet);
+        if(state != null) {
+            Log.e(TAG, "trying to restore listview state..");
+            movieGridView.onRestoreInstanceState(state);
+
+
+        }else {
+
         }
     }
+    */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu,menu);
@@ -114,6 +202,8 @@ public class MainActivity extends AppCompatActivity {
                 movieAdapter.addAll(movies);
                 movieAdapter.notifyDataSetChanged();
                 movieGridView.setAdapter(movieAdapter);
+                movies1 = new ArrayList<MovieModel>();
+                movies1 = movies;
             }
         }
     }

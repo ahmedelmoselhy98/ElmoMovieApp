@@ -1,12 +1,15 @@
 package com.e.k.m.a.elmomovieapp.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 /**
  * Created by ahmedelmoselhy on 2/18/2018.
  */
 
-public class MovieModel  implements Serializable{
+public class MovieModel  implements Serializable,Parcelable{
     private int movieId;
     private String movieTitle;
     private String movieOverview;
@@ -16,6 +19,28 @@ public class MovieModel  implements Serializable{
 
     public MovieModel() {
     }
+
+    protected MovieModel(Parcel in) {
+        movieId = in.readInt();
+        movieTitle = in.readString();
+        movieOverview = in.readString();
+        moviePostarPath = in.readString();
+        movieReleaseDate = in.readString();
+        movieVoteAverage = in.readString();
+    }
+
+    public static final Creator<MovieModel> CREATOR = new Creator<MovieModel>() {
+        @Override
+        public MovieModel createFromParcel(Parcel in) {
+            return new MovieModel(in);
+        }
+
+        @Override
+        public MovieModel[] newArray(int size) {
+            return new MovieModel[size];
+        }
+    };
+
     public int getMovieId() {
         return movieId;
     }
@@ -72,5 +97,20 @@ public class MovieModel  implements Serializable{
                 +"Movie Release Date: "+getMovieReleaseDate()+"\n"
                 +"Movie Overview: "+getMovieOverview()+"\n"
                 ;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(movieId);
+        dest.writeString(movieTitle);
+        dest.writeString(movieOverview);
+        dest.writeString(moviePostarPath);
+        dest.writeString(movieReleaseDate);
+        dest.writeString(movieVoteAverage);
     }
 }

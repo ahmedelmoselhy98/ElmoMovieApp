@@ -17,6 +17,7 @@ import com.e.k.m.a.elmomovieapp.R;
 import com.e.k.m.a.elmomovieapp.models.MovieModel;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public class MovieAdapter extends ArrayAdapter<MovieModel> {
             @Override
             public void onClick(View v) {
                 Intent intent =new Intent(getContext(), DetailActivity.class);
-                intent.putExtra("movieKey",movieModel);
+                intent.putExtra("movieKey", (Serializable) movieModel);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getContext().startActivity(intent);
             }
