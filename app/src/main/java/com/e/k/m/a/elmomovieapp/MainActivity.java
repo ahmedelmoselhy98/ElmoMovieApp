@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                     getParcelableArray("movies");
             if (parcelable != null) {
                 int numMovieObjects = parcelable.length;
-                Toast.makeText(this, ""+numMovieObjects, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, ""+numMovieObjects, Toast.LENGTH_SHORT).show();
 
                 ArrayList<MovieModel> movies = new ArrayList<MovieModel>();
                 for (int i = 0; i < numMovieObjects; i++) {
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 movieGridView.setAdapter(new MovieAdapter(this,movies));
                 movieGridView.setScrollX(savedInstanceState.getInt("scrollX"));
                 movieGridView.setScrollY(savedInstanceState.getInt("scrollY"));
-                Toast.makeText(this, "aaaaaaaaaaaaasdasdsad", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "aaaaaaaaaaaaasdasdsad", Toast.LENGTH_SHORT).show();
             }
         }
     }
